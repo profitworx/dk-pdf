@@ -16,6 +16,9 @@
       		$wp_head = get_option( 'dkpdf_print_wp_head', '' );
       		if( $wp_head == 'on' ) {
       			wp_head();
+      		} else {
+      			// Always output canonical URL even when wp_head is disabled
+      			do_action( 'dkpdf_head_content' );
       		}
       	?>
       	<style type="text/css">

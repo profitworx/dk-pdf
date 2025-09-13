@@ -251,6 +251,32 @@ function dkpdf_sanitize_options() {
 add_action( 'init', 'dkpdf_sanitize_options' );
 
 /**
+ * Add canonical URL and noindex for PDF pages to prevent duplicate content issues
+ */
+function dkpdf_add_canonical_url() {
+	if ( get_query_var( 'pdf' ) && is_singular() ) {
+		global $post;
+		$canonical_url = get_permalink( $post->ID );
+		echo '<link rel="canonical" href="' . esc_url( $canonical_url ) . '" />' . "\n";
+		echo '<meta name="robots" content="noindex, follow" />' . "\n";
+	}
+}
+add_action( 'wp_head', 'dkpdf_add_canonical_url', 1 );
+
+/**
+ * Output canonical URL in PDF template even when wp_head is disabled
+ */
+function dkpdf_output_pdf_canonical() {
+	if ( get_query_var( 'pdf' ) && is_singular() ) {
+		global $post;
+		$canonical_url = get_permalink( $post->ID );
+		echo '<link rel="canonical" href="' . esc_url( $canonical_url ) . '" />' . "\n";
+		echo '<meta name="robots" content="noindex, follow" />' . "\n";
+	}
+}
+add_action( 'dkpdf_head_content', 'dkpdf_output_pdf_canonical' );
+
+/**
  * Sanitizes footer text allowing limited HTML tags
  */
 function dkpdf_update_field_dkpdf_pdf_footer_text( $new_value, $old_value ) {
